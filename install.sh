@@ -79,7 +79,13 @@ $DOCKER_CMD down --remove-orphans 2>/dev/null
 # Launch
 $DOCKER_CMD up -d --build
 
+# Detect Local IP
+IP_ADDR=$(hostname -I | awk '{print $1}')
+if [ -z "$IP_ADDR" ]; then
+    IP_ADDR="localhost"
+fi
+
 echo "------------------------------------------------"
 echo "✨ Installation Complete!"
-echo "Access the Setup Wizard at: http://localhost:$HTTP_PORT/setup"
+echo "Access the Setup Wizard at: http://$IP_ADDR:$HTTP_PORT/setup"
 echo "------------------------------------------------"
