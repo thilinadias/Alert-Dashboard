@@ -115,7 +115,16 @@ $DOCKER_CMD ps
 # Check if webserver is down
 if ! $DOCKER_CMD ps | grep -q "alert-dashboard-webserver.*Up"; then
     echo "❌ ERROR: Webserver container failed to stay Up."
-    echo "Run: '$DOCKER_CMD logs alert-dashboard-webserver' to see why."
+    echo "Logs:"
+    $DOCKER_CMD logs alert-dashboard-webserver
+    exit 1
+fi
+
+# Check if app container is down (PHP-FPM)
+if ! $DOCKER_CMD ps | grep -q "alert-dashboard-app.*Up"; then
+    echo "❌ ERROR: App container failed to start."
+    echo "Logs:"
+    $DOCKER_CMD logs alert-dashboard-app
     exit 1
 fi
 
