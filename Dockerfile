@@ -36,14 +36,18 @@ RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www
 
+# Enable PHP-FPM error logging
+RUN echo "catch_workers_output = yes" >> /usr/local/etc/php-fpm.d/www.conf && \
+    echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf && \
+    echo "php_admin_value[error_log] = /proc/self/fd/2" >> /usr/local/etc/php-fpm.d/www.conf
+
 # Change current user to www
 USER www-data
-
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
 
 # Enable PHP-FPM error logging
 RUN echo "catch_workers_output = yes" >> /usr/local/etc/php-fpm.d/www.conf && \
     echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf && \
     echo "php_admin_value[error_log] = /proc/self/fd/2" >> /usr/local/etc/php-fpm.d/www.conf
+
+# Change current user to www
+USER www-data
