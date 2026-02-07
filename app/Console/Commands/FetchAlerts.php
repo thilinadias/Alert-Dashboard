@@ -54,19 +54,18 @@ class FetchAlerts extends Command
 
     private function fetchData()
     {
-        $email = env('IMAP_USERNAME');
-        
-        $this->info('Fetching alerts for: ' . $email);
-
-        // Get OAuth token from database
-        $oauthToken = OAuthToken::getForEmail($email);
+        // Get the first available OAuth token
+        $oauthToken = OAuthToken::first();
 
         if (!$oauthToken) {
-            $this->error("No OAuth token found for {$email}.");
-            $this->warn("Please authorize the app by visiting: " . route('oauth.google'));
+            $this->error("No OAuth token found in database.");
+            $this->warn("Please authorize a Google account in Settings.");
             return 1;
         }
 
+        $email = $oauthToken->email;
+        $this->info('Fetching alerts for: ' . $email);
+ 
         // Check if token is expired and refresh if needed
         if ($oauthToken->isExpired()) {
             $this->info('Access token expired. Refreshing...');
@@ -77,9 +76,9 @@ class FetchAlerts extends Command
                 return 1;
             }
         }
-
+ 
         $this->info('Connecting to IMAP server with OAuth2...');
-
+ 
         try {
             // Create IMAP client with OAuth2
             $client = Client::make([
@@ -220,9 +219,9 @@ class FetchAlerts extends Command
     {
         try {
             $provider = new Google([
-                'clientId'     => env('GOOGLE_CLIENT_ID'),
-                'clientSecret' => env('GOOGLE_CLIENT_SECRET'),
-                'redirectUri'  => env('GOOGLE_REDIRECT_URI'),
+                'clientId'     => config('services.google.client_id'),
+                'clientSecret' => config('services.google.client_secret'),
+                'redirectUri'  => config('services.google.redirect'),
             ]);
 
             $newToken = $provider->getAccessToken('refresh_token', [
