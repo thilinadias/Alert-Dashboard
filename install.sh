@@ -43,8 +43,11 @@ if check_port 3306; then
     fi
 fi
 
-# Detect Local IP early
-IP_ADDR=$(hostname -I | awk '{print $1}')
+# Detect Local IP
+IP_ADDR=$(ip route get 1 2>/dev/null | awk '{print $7;exit}')
+if [ -z "$IP_ADDR" ]; then
+    IP_ADDR=$(hostname -I | awk '{print $1}')
+fi
 if [ -z "$IP_ADDR" ]; then
     IP_ADDR="localhost"
 fi

@@ -29,8 +29,10 @@ WORKDIR /var/www
 # Copy existing application directory contents
 COPY . /var/www
 
-# Ensure entrypoint is executable
-RUN chmod +x /var/www/docker-entrypoint.sh
+# Ensure entrypoint is executable and has correct line endings
+RUN apt-get install -y dos2unix
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN dos2unix /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Copy existing application directory permissions
 COPY --chown=www-data:www-data . /var/www
