@@ -16,18 +16,22 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
         ]);
 
-        $user = \App\Models\User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password'),
-        ]);
+        $user = \App\Models\User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin User',
+                'password' => bcrypt('password'),
+            ]
+        );
         $user->assignRole('admin');
 
-        $nocUser = \App\Models\User::factory()->create([
-            'name' => 'NOC Analyst',
-            'email' => 'analyst@example.com',
-            'password' => bcrypt('password'),
-        ]);
+        $nocUser = \App\Models\User::firstOrCreate(
+            ['email' => 'analyst@example.com'],
+            [
+                'name' => 'NOC Analyst',
+                'password' => bcrypt('password'),
+            ]
+        );
         $nocUser->assignRole('noc_analyst');
     }
 }
