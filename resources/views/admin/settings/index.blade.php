@@ -58,6 +58,57 @@
                         </div>
 
                         <div class="mb-4">
+                            <h5 class="fw-bold border-bottom pb-2">OAuth Configuration</h5>
+                            <p class="text-muted small">Configure "Sign in with Google/Microsoft" keys here. These will override `.env` values.</p>
+                            
+                            <!-- Google -->
+                            <div class="card mb-3 border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="fw-bold text-primary"><i class="bi bi-google me-2"></i>Google OAuth</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Client ID</label>
+                                            <input type="text" name="google_client_id" class="form-control form-control-sm" value="{{ $settings['google_client_id'] ?? '' }}" placeholder="apps.googleusercontent.com">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Client Secret</label>
+                                            <input type="password" name="google_client_secret" class="form-control form-control-sm" value="{{ $settings['google_client_secret'] ?? '' }}">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small">Redirect URI</label>
+                                            <input type="text" name="google_redirect_uri" class="form-control form-control-sm" value="{{ $settings['google_redirect_uri'] ?? url('/oauth/callback') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Microsoft -->
+                            <div class="card mb-3 border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="fw-bold text-primary"><i class="bi bi-microsoft me-2"></i>Microsoft OAuth</h6>
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Client ID</label>
+                                            <input type="text" name="microsoft_client_id" class="form-control form-control-sm" value="{{ $settings['microsoft_client_id'] ?? '' }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Client Secret</label>
+                                            <input type="password" name="microsoft_client_secret" class="form-control form-control-sm" value="{{ $settings['microsoft_client_secret'] ?? '' }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Tenant ID</label>
+                                            <input type="text" name="microsoft_tenant_id" class="form-control form-control-sm" value="{{ $settings['microsoft_tenant_id'] ?? '' }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Redirect URI</label>
+                                            <input type="text" name="microsoft_redirect_uri" class="form-control form-control-sm" value="{{ $settings['microsoft_redirect_uri'] ?? url('/oauth/callback') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
                             <h5 class="fw-bold border-bottom pb-2">Example Footer</h5>
                             
                             <div class="row g-3">

@@ -21,6 +21,10 @@ class SettingController extends Controller
             'system_name' => 'nullable|string|max:255',
             'copyright_text' => 'nullable|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
+            'google_client_id' => 'nullable|string',
+            'google_client_secret' => 'nullable|string',
+            'microsoft_client_id' => 'nullable|string',
+            'microsoft_client_secret' => 'nullable|string',
         ]);
 
         if ($request->has('system_name')) {
@@ -29,6 +33,18 @@ class SettingController extends Controller
 
         if ($request->has('copyright_text')) {
             Setting::set('copyright_text', $request->copyright_text);
+        }
+        
+        // OAuth Settings
+        $oauthFields = [
+            'google_client_id', 'google_client_secret', 'google_redirect_uri',
+            'microsoft_client_id', 'microsoft_client_secret', 'microsoft_tenant_id', 'microsoft_redirect_uri'
+        ];
+
+        foreach ($oauthFields as $field) {
+            if ($request->has($field)) {
+                Setting::set($field, $request->input($field));
+            }
         }
 
         if ($request->hasFile('logo')) {
