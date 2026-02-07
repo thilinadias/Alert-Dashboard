@@ -4,11 +4,11 @@
 set -e
 
 # Wait for database
-until nc -z -v -w30 $DB_HOST 3306
-do
-  echo "Waiting for database connection..."
-  sleep 5
+echo "Waiting for database ($DB_HOST:3306)..."
+while ! nc -z $DB_HOST 3306; do
+  sleep 2
 done
+echo "Database is ready!"
 
 # Install dependencies if vendor is missing
 if [ ! -d "vendor" ]; then
