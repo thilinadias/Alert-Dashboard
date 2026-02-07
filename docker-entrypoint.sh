@@ -4,11 +4,17 @@
 set -e
 
 # Wait for database
+# Wait for database
 echo "Waiting for database ($DB_HOST:3306)..."
 while ! nc -z $DB_HOST 3306; do
+  echo "Still waiting for mysql..."
   sleep 2
 done
 echo "Database is ready!"
+
+# Show PHP version and modules
+php -v
+php -m
 
 # Install dependencies if vendor is missing
 if [ ! -d "vendor" ]; then

@@ -124,6 +124,22 @@ if ! $DOCKER_CMD ps | grep -q "alert-dashboard-webserver.*Up"; then
     exit 1
 fi
 
+# Deep Diagnostics for App Container
+echo "🔍 Checking App Container Internals..."
+$DOCKER_CMD exec alert-dashboard-app php-fpm -t || echo "⚠️ PHP-FPM Configuration Test Failed"
+$DOCKER_CMD exec alert-dashboard-app ps aux | grep php || echo "⚠️ PID Check Failed"
+$DOCKER_CMD exec alert-dashboard-app netstat -tulpn || echo "⚠️ Network Check Failed (netstat missing?)"
+
+# Check if app is listening on 9000
+if ! $DOCKER_CMD exec alert-dashboard-app nc -z localhost 9000; then
+    echo "❌ ERROR: PHP-FPM is NOT listening on port 9000 internally."
+    echo "Container Logs:"
+    $DOCKER_CMD logs alert-dashboard-app
+    exit 1
+fi
+
+echo "✅ PHP-FPM is listening on port 9000."
+
 # Check if app container is down (PHP-FPM)
 if ! $DOCKER_CMD ps | grep -q "alert-dashboard-app.*Up"; then
     echo "❌ ERROR: App container failed to start."
