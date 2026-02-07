@@ -7,11 +7,28 @@ echo "------------------------------------------------"
 echo "🛡️ Alert Dashboard - Docker Installation"
 echo "------------------------------------------------"
 
+# 0. Cleanup Existing Services
+echo "🔄 Checking for existing installation..."
+
+# Detect which compose command to use
+if docker compose version >/dev/null 2>&1; then
+    DOCKER_CMD="docker compose"
+else
+    DOCKER_CMD="docker-compose"
+fi
+
+# Stop existing containers to free up ports
+if [ -f "docker-compose.yml" ]; then
+    echo "🛑 Stopping running containers..."
+    $DOCKER_CMD down --remove-orphans 2>/dev/null
+fi
+
 # Function to check if a port is in use
 check_port() {
     (ss -tuln 2>/dev/null | grep -q ":$1 ") || (netstat -tuln 2>/dev/null | grep -q ":$1 ") || (echo >/dev/tcp/localhost/$1) 2>/dev/null
     return $?
 }
+
 
 # 1. Check HTTP Port (Default 80)
 HTTP_PORT=80
@@ -80,19 +97,6 @@ sed -i 's/\r$//' .env 2>/dev/null
 
 echo "✅ Configuration ready (Web: $HTTP_PORT, DB: $DB_PORT_HOST)"
 echo "🚀 Launching Docker containers..."
-
-
-# Detect which compose command to use
-if docker compose version >/dev/null 2>&1; then
-    DOCKER_CMD="docker compose"
-else
-    DOCKER_CMD="docker-compose"
-fi
-
-echo "Using: $DOCKER_CMD"
-
-# Cleanup old attempts that might have corrupted states
-$DOCKER_CMD down --remove-orphans 2>/dev/null
 
 # Launch
 $DOCKER_CMD up -d --build
