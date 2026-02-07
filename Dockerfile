@@ -35,6 +35,10 @@ RUN echo "catch_workers_output = yes" >> /usr/local/etc/php-fpm.d/www.conf && \
     echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf && \
     echo "php_admin_value[error_log] = /proc/self/fd/2" >> /usr/local/etc/php-fpm.d/www.conf
 
+# Ensure PHP-FPM listens on 9000 (not 127.0.0.1)
+RUN sed -i 's/listen = 127.0.0.1:9000/listen = 9000/' /usr/local/etc/php-fpm.d/zz-docker.conf 2>/dev/null || \
+    sed -i 's/listen = 127.0.0.1:9000/listen = 9000/' /usr/local/etc/php-fpm.d/www.conf
+
 # Ensure entrypoint is executable (Run as root before user switch)
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
