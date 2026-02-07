@@ -78,6 +78,13 @@
                                             <label class="form-label small">Redirect URI</label>
                                             <input type="text" name="google_redirect_uri" class="form-control form-control-sm" value="{{ $settings['google_redirect_uri'] ?? url('/oauth/callback') }}">
                                         </div>
+                                        @if(isset($settings['google_client_id']) && isset($settings['google_client_secret']))
+                                        <div class="col-12 mt-2">
+                                            <a href="{{ route('oauth.google') }}" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-google me-1"></i> Connect Google Account
+                                            </a>
+                                        </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
