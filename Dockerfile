@@ -26,28 +26,25 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Copy existing application directory contents
-COPY . /var/www
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
 
-# Ensure entrypoint is executable and has correct line endings
+# Enable PHP-FPM error logging (Run as root)
+RUN echo "catch_workers_output = yes" >> /usr/local/etc/php-fpm.d/www.conf && \
+    echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf && \
+    echo "php_admin_value[error_log] = /proc/self/fd/2" >> /usr/local/etc/php-fpm.d/www.conf
+
+# Ensure entrypoint is executable (Run as root before user switch)
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Copy existing application directory permissions
+# -----------------------------------------------
+# Application Setup ( Runs as www-data )
+# -----------------------------------------------
+
+# Change current user to www
+USER www-data
+
+# Copy existing application directory contents
 COPY --chown=www-data:www-data . /var/www
-
-# Enable PHP-FPM error logging
-RUN echo "catch_workers_output = yes" >> /usr/local/etc/php-fpm.d/www.conf && \
-    echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf && \
-    echo "php_admin_value[error_log] = /proc/self/fd/2" >> /usr/local/etc/php-fpm.d/www.conf
-
-# Change current user to www
-USER www-data
-
-# Enable PHP-FPM error logging
-RUN echo "catch_workers_output = yes" >> /usr/local/etc/php-fpm.d/www.conf && \
-    echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf && \
-    echo "php_admin_value[error_log] = /proc/self/fd/2" >> /usr/local/etc/php-fpm.d/www.conf
-
-# Change current user to www
-USER www-data
