@@ -21,6 +21,13 @@ if [ ! -d "vendor" ]; then
     composer install --no-interaction --optimize-autoloader --no-dev
 fi
 
+# Build frontend assets if missing
+if [ ! -d "public/build" ]; then
+    echo "📦 Building frontend assets..."
+    npm install
+    npm run build
+fi
+
 # Ensure .env exists
 if [ ! -f ".env" ]; then
     cp .env.example .env
