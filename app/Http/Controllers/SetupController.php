@@ -42,6 +42,21 @@ class SetupController extends Controller
         return view('setup.requirements', compact('requirements'));
     }
 
+    public function debugEnv()
+    {
+        $path = base_path('.env');
+        return response()->json([
+            'exists' => file_exists($path),
+            'writable' => is_writable($path),
+            'permissions' => substr(sprintf('%o', fileperms($path)), -4),
+            'owner' => posix_getpwuid(fileowner($path)),
+            'group' => posix_getgrgid(filegroup($path)),
+            'usering_id' => posix_getuid(),
+            'effective_user' => posix_geteuid(),
+            'whoami' => exec('whoami'),
+        ]);
+    }
+
     public function showDatabaseForm()
     {
         return view('setup.database');
