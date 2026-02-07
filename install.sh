@@ -172,7 +172,21 @@ if [ "$resolved" = false ]; then
     exit 1
 fi
 
-echo "✅ PHP-FPM is listening on port 9000."
+echo "✅ PHP-FPM is up and running!"
+
+# 4. Final Configuration Checks
+echo "🔧 Running final configuration checks..."
+
+# Fix Missing App Key (Causes 500 Error)
+if $DOCKER_CMD exec app grep -q "^APP_KEY=$" .env 2>/dev/null || \
+   ! $DOCKER_CMD exec app grep -q "^APP_KEY=" .env 2>/dev/null; then
+    echo "🔑 APP_KEY is missing. Generating..."
+    $DOCKER_CMD exec app php artisan key:generate --force
+    $DOCKER_CMD exec app php artisan config:clear
+fi
+
+# Ensure storage link exists
+$DOCKER_CMD exec app php artisan storage:link 2>/dev/null || true
 
 # Check if app container is down (PHP-FPM)
 if ! $DOCKER_CMD ps | grep -q "alert-dashboard-app.*Up"; then
@@ -184,7 +198,8 @@ fi
 
 echo "------------------------------------------------"
 echo "✨ Installation Complete!"
-echo "Access the Setup Wizard at: http://$IP_ADDR:$HTTP_PORT/setup"
+echo "------------------------------------------------"
+echo "🌍 Access the Setup Wizard at: http://$IP_ADDR:$HTTP_PORT/setup"
 echo ""
 echo "💡 TIP: If the page doesn't load, check your Linux firewall:"
 echo "   sudo ufw allow $HTTP_PORT/tcp"
