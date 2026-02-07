@@ -64,7 +64,20 @@ sed -i 's/\r$//' docker-entrypoint.sh
 echo "✅ Configuration ready (Web: $HTTP_PORT, DB: $DB_PORT)"
 echo "🚀 Launching Docker containers..."
 
-docker-compose up -d
+# Detect which compose command to use
+if docker compose version >/dev/null 2>&1; then
+    DOCKER_CMD="docker compose"
+else
+    DOCKER_CMD="docker-compose"
+fi
+
+echo "Using: $DOCKER_CMD"
+
+# Cleanup old attempts that might have corrupted states
+$DOCKER_CMD down --remove-orphans 2>/dev/null
+
+# Launch
+$DOCKER_CMD up -d --build
 
 echo "------------------------------------------------"
 echo "✨ Installation Complete!"
