@@ -40,5 +40,11 @@ php artisan storage:link
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
+# Fix permissions for .env (Required for Setup Wizard)
+if [ -f .env ]; then
+    chown www-data:www-data .env
+    chmod 664 .env
+fi
+
 # Start PHP-FPM
 exec php-fpm
