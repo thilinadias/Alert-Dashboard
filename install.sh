@@ -9,24 +9,18 @@ echo "------------------------------------------------"
 
 # Function to check if a port is in use
 check_port() {
-    (echo >/dev/tcp/localhost/$1) &>/dev/null
+    [ -n "$(ss -tuln | grep ":$1 ")" ] || [ -n "$(netstat -tuln | grep ":$1 ")" ] || (echo >/dev/tcp/localhost/$1) &>/dev/null
     return $?
-}
-
-# Function to find next available port
-find_port() {
-    local port=$1
-    while check_port $port; do
-        port=$((port + 1))
-    done
-    echo $port
 }
 
 # 1. Check HTTP Port (Default 80)
 HTTP_PORT=80
 if check_port 80; then
-    echo "⚠️ Port 80 is already in use."
-    HTTP_PORT=$(find_port 8080)
+    echo "⚠️ Port 80 is already in use by another service."
+    HTTP_PORT=8080
+    while check_port $HTTP_PORT; do
+        HTTP_PORT=$((HTTP_PORT + 1))
+    done
     read -p "Use port $HTTP_PORT instead? [Y/n]: " choice
     choice=${choice:-Y}
     if [[ ! $choice =~ ^[Yy]$ ]]; then
@@ -35,14 +29,17 @@ if check_port 80; then
 fi
 
 # 2. Check MySQL Port (Default 3306)
-DB_PORT=3306
+DB_PORT_HOST=3306
 if check_port 3306; then
     echo "⚠️ Port 3306 is already in use."
-    DB_PORT=$(find_port 3307)
-    read -p "Use port $DB_PORT instead? [Y/n]: " choice
+    DB_PORT_HOST=3307
+    while check_port $DB_PORT_HOST; do
+        DB_PORT_HOST=$((DB_PORT_HOST + 1))
+    done
+    read -p "Use port $DB_PORT_HOST instead? [Y/n]: " choice
     choice=${choice:-Y}
     if [[ ! $choice =~ ^[Yy]$ ]]; then
-        read -p "Enter custom port: " DB_PORT
+        read -p "Enter custom port: " DB_PORT_HOST
     fi
 fi
 
@@ -52,14 +49,25 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-# Update ports in .env
-sed -i "s/^APP_PORT=.*/APP_PORT=$HTTP_PORT/" .env 2>/dev/null || echo "APP_PORT=$HTTP_PORT" >> .env
-sed -i "s/^DB_PORT_HOST=.*/DB_PORT_HOST=$DB_PORT/" .env 2>/dev/null || echo "DB_PORT_HOST=$DB_PORT" >> .env
+# Function to update or add env var
+update_env() {
+    local key=$1
+    local value=$2
+    if grep -q "^${key}=" .env; then
+        sed -i "s|^${key}=.*|${key}=${value}|" .env
+    else
+        echo "${key}=${value}" >> .env
+    fi
+}
 
-# Fix permissions and line endings for the entrypoint script
+update_env "APP_PORT" "$HTTP_PORT"
+update_env "DB_PORT_HOST" "$DB_PORT_HOST"
+update_env "APP_URL" "http://\${IP_ADDR:-\$IP_ADDR}"
+
+# Fix permissions and line endings
 chmod +x docker-entrypoint.sh
-# Fix potential Windows CRLF issues
-sed -i 's/\r$//' docker-entrypoint.sh
+sed -i 's/\r$//' docker-entrypoint.sh 2>/dev/null
+sed -i 's/\r$//' .env 2>/dev/null
 
 echo "✅ Configuration ready (Web: $HTTP_PORT, DB: $DB_PORT)"
 echo "🚀 Launching Docker containers..."
