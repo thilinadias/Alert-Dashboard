@@ -14,7 +14,24 @@ This guide explains how to install the **Alert Dashboard** on Windows Server 201
 
 ---
 
-## 🚀 Step 1: Install Dependencies
+## ⚡ Option 1: Automated Setup (Recommended)
+
+We have provided a PowerShell script to automatically download and install PHP, Composer, URL Rewrite, and MySQL.
+
+1.  **Open PowerShell as Administrator**.
+2.  Navigate to the project folder.
+3.  Run the script:
+    ```powershell
+    Set-ExecutionPolicy Bypass -Scope Process -Force; .\install-iis-deps.ps1
+    ```
+4.  **Wait**: The script will install Chocolatey, download all dependencies, and configure `php.ini` for you.
+5.  **Restart Server**: It is recommended to restart the server (or just IIS via `iisreset`) after installation.
+
+---
+
+## 🛠 Option 2: Manual Installation
+
+If you cannot run the script, follow these steps:
 
 ### 1. Install PHP Manager for IIS (Highly Recommended)
 -   Download and install [PHP Manager for IIS](https://github.com/phpmanager/phpmanager/releases).

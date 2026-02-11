@@ -9,15 +9,32 @@ A powerful, high-speed, and role-based dashboard for managing help desk alerts, 
 - **Double-Speed Monitoring**: Default 10-second polling for real-time alert awareness.
 - **Dockerized Ready**: One-command installation for Windows and Linux.
 - **Interactive GUI Setup**: Browser-based installer for easy configuration.
+- **IIS Support**: Native Windows Server deployment guide included.
 - **SSL Management**: Generate or upload certificates directly from the dashboard.
 - **Advanced Classification**: Rules-based engine for Severity and Client mapping.
+
+---
+
+## 📢 What's New in v1.1.0
+-   **Custom Domain Support**: Installers now prompt for custom domains (e.g., `alert.company.com`).
+-   **IIS Compatibility**: Added `web.config` and a dedicated [IIS Setup Guide](IIS_SETUP.md).
+-   **Smart Networking**: Auto-detection of IPs and `nip.io` integration for Google OAuth on local networks.
+-   **Windows Installer**: New `install.bat` for one-click Docker setup on Windows.
 - **SLA Engine**: Visual countdowns and breach alerts to meet service standards.
 
 ---
 
-## 🐳 Docker Installation (Recommended)
+## 📦 Installation Options
 
-This is the easiest way to launch the system on both **Windows** and **Linux**. The installer will automatically detect if your device already has other services running on certain ports and propose alternatives.
+Choose the method that fits your environment:
+
+1.  **Docker (Recommended)**: Best for Linux/Windows 10/11. Included in this repo.
+2.  **IIS (Windows Server)**: Best for production Windows Server 2016+. [Read Guide](IIS_SETUP.md).
+3.  **XAMPP (Manual)**: Good for local development without Docker.
+
+---
+
+## 🐳 Docker Installation (Recommended)
 
 1.  **Clone the project**
     ```bash
