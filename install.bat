@@ -76,7 +76,16 @@ echo APP_URL=!APP_URL!>>.env
 echo ✅ Configuration ready (Web: %HTTP_PORT%, DB: %DB_PORT%)
 echo 🚀 Launching Docker containers...
 
-docker-compose up -d
+:: Check for docker-compose or docker compose
+docker compose version >nul 2>&1
+if %errorlevel% equ 0 (
+    set COMPOSE_CMD=docker compose
+) else (
+    set COMPOSE_CMD=docker-compose
+)
+
+echo 🚀 Launching Docker containers...
+%COMPOSE_CMD% up -d
 
 echo ------------------------------------------------
 echo ✨ Installation Complete!
