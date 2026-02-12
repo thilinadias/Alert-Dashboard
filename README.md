@@ -101,21 +101,27 @@ You can secure your dashboard using the GUI:
 
 ---
 
-## 🏛️ IIS Installation (Windows Server)
 
-For Windows Server environments without Docker/XAMPP, we support native IIS deployment. 
-
-👉 **[Read the IIS Setup Guide](IIS_SETUP.md)**
 
 ---
 
-## 🖥 Manual Installation (XAMPP/Local)
+## 🖥 Manual Installation (Linux)
 
-1.  `composer install`
-2.  `npm install && npm run build`
-3.  `cp .env.example .env && php artisan key:generate`
-4.  `php artisan migrate --seed`
-5.  `php artisan serve`
+For bare-metal Linux servers (Nginx + PHP-FPM) without Docker, please refer to our dedicated guide:
+
+👉 **[Read the Linux Manual Setup Guide](LINUX_SETUP.md)**
+
+---
+
+## � Troubleshooting
+
+Encountering issues? We have a comprehensive troubleshooting guide covering:
+- Port conflicts
+- Google OAuth `nip.io` checks
+- Database connection errors
+- Permission issues
+
+👉 **[Read the Troubleshooting Wiki](WIKI_TROUBLESHOOTING.md)**
 
 ---
 
